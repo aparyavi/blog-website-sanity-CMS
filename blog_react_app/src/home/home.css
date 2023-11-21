@@ -1,0 +1,21 @@
+.home_page {
+    margin-bottom: 50px;
+}
+
+.individual_blog_divider {
+    border-bottom: 1px solid gray;
+    margin-top: 50px;
+}
+
+.individual_blog_link {
+    width: fit-content;
+}
+
+.individual_blog_link a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.individual_blog_link a:hover {
+    color: aliceblue;
+}
