@@ -67,6 +67,11 @@ Next, you will need to install all the dependencies listed in (`packag.json`) by
 npm i
 ```
 
+You can start your project locally by running:
+```sh
+npm start
+```
+
 There is a (`sanity_config.js`) file in the (`./src`) directory where you will need to put your Sanity projectId and production title:
 ```javascript
 export default {
@@ -86,6 +91,45 @@ In the (`App.js`) file we have routes to two pages which are the home page and t
     <Route exact path='/blog/:id' element={<Blog />} />
   </Routes>
 </Router>
+```
+
+Both the home page and the individual blog pages fetch data from the Sanity CMS using the (`@sanity/client`) module.
+
+The functions for fetching blog posts from Sanity are located in the (`sanity_client.js`) file inside the (`./src`) directory.
+Function for getting individual blogs is as follows:
+```javascript
+export async function getPost(id) {
+    const posts = await client.getDocument(id)
+    const author = await client.getDocument(posts.author._ref)
+    const category = await client.getDocument(posts.categories[0]._ref)
+    return [posts, author, category]
+}
+```
+Function for fetching all of the blog posts is as follows: 
+```javascript
+export async function getPosts() {
+    const posts_temp = []
+    const posts = await client.fetch(
+        `*[_type == "post"]`
+    )
+    for (let index = 0; index < posts.length; index++) {
+        const post = posts[index];
+
+        const author = await client.getDocument(post.author._ref)
+        const category = await client.getDocument(post.categories[0]._ref)
+        posts_temp.push({
+            ...post,
+            author: author,
+            category: category.title
+        })
+    }
+    return posts_temp
+}
+```
+
+Once you have finished setting up your project you can run the following to be able to access the project from your express server:
+```sh
+npm run build
 ```
 
 ### Express Server
