@@ -1,106 +1,180 @@
-## React Node Express App
-This project serves as a template to build more complex applications using React and Node js.
+# Blog Page
+Using an express server to run a Sanity content management system and a React web application.
 
-### Setup
-The code is divided into two parts; back end and front end. The back end main file can be located in
-(`index.js`)
-where a new Server object is initialized from the Server class located in 
-(`models/server.js`)
+## Setup
+This project consists of two main directories, one hosting the Sanity CMS and the other hosting the React application.
 
-Run this code to start the server:
+### Sanity CMS
+If you don't have a Sanity project created, you can follow the instructions [here](https://www.sanity.io/docs/create-a-sanity-project) and start your Sanity project.
+Otherwise, if you already have a project created, you can copy your projectId and your dataset name onto (`./blog_sanity_cms/sanity.config.js`) and (`./blog_sanity_cms/sanity.cli.js`).
+To get into the project directory run the following:
 ```sh
-node index.js
+cd blog_sanity_cms
+```
+(`./blog_sanity_cms/sanity.config.js`)
+```javascript
+export default defineConfig({
+  name: 'default',
+  title: 'blog_sanity_cms',
+
+  projectId: 'your-project-id',
+  dataset: 'dataset-name',
+
+  plugins: [deskTool(), visionTool()],
+
+  schema: {
+    types: schemaTypes,
+  },
+})
+```
+(`./blog_sanity_cms/sanity.cli.js`)
+```javascript
+export default defineCliConfig({
+  api: {
+    projectId: 'your-project-id',
+    dataset: 'dataset-name'
+  }
+})
 ```
 
-You should get the response:
+Next, you need to install all the dependencies by running:
 ```sh
-'Server running on port:  3010'
+npm i
+sanity install
 ```
 
-The front end code is located in the (`react_app`) directory.
+Now you can start your Sanity project locally on port 3333 by running:
+```sh
+npm run dev
+```
 
-You can start the React app locally by running:
+You can customize your Sanity Studio by following the instructions on [here](https://www.sanity.io/docs/customization).
+
+Once you are done with your project customization you can run the following to be able to access the sanity project from your express server:
+```sh
+npm run build
+```
+
+### React Blog
+This is a simple React application that fetches data from the Sanity CMS and displays it for the client. To become more familiar with React you can look at the resources available on [React Js website](https://legacy.reactjs.org/docs/hello-world.html) as well as other sources on the internet.
+
+To get into the project directory run the following:
+```sh
+cd blog_react_app
+```
+Next, you will need to install all the dependencies listed in (`packag.json`) by running the following:
+```sh
+npm i
+```
+
+You can start your project locally by running:
 ```sh
 npm start
 ```
-This window should pop up:
 
-<img width="717" alt="Screenshot 2023-11-20 at 7 41 39 PM" src="https://github.com/aparyavi/react-node-express-app/assets/62215723/30e2c183-e5f6-4176-88f5-b07c9c5121ae">
-
-
-### Create API Endpoints
-New API endpoints can be created in server.js by adding to the paths object:
-
+There is a (`sanity_config.js`) file in the (`./src`) directory where you will need to put your Sanity projectId and production title:
 ```javascript
-this.app = express();
-this.port = process.env.PORT || 3010;
-this.paths = {
-   response: "/api/response",
-   // add endpoints here
-};
-
-this.middlewares();
-this.routes();
-```
-After adding the endpoint to paths, the API endpoint should be routed to a file that can handle the API call.
-```javascript
-this.app.use(this.paths.response, require("../routes/response"));
-// add path to file to handle API call
-
-// Catch all requests that don't match any route
-this.app.get("*", (req, res) => {
-   res.sendFile(
-      path.join(__dirname, "../react_app/build/index.html")
-   );
-});
-```
-
-### Client Side
-Once the client side is up and running, the connection to the back end is established using `axios` library.
-
-`getResponseFromServer()` is a function in (`src/App.js`) that uses `axios` to get a simple response from the server.
-```javascript
-async function getResponseFromServer() {
-   // API call to /api/response endpoint
-   const result = await axios.get(config.server + 'api/response')
-   // set response using React Hooks
-   setResponse(result.data)
+export default {
+    projectId: 'your-project-id',
+    dataset: 'dataset-name',
+    useCdn: true, // set to `false` to bypass the edge cache
+    apiVersion: '2023-11-21', // use current date (YYYY-MM-DD) to target the latest API version
+    // token: process.env.SANITY_SECRET_TOKEN // Only if you want to update content with the client
 }
 ```
-(`src/config.js`) can be modified to change the API from localhost to any other source.
-```javascript
-const config = {
-    server: "http://localhost:3010/",
-};
 
-export default config;
+In the (`App.js`) file we have routes to two pages which are the home page and the individual blog pages.
+```html
+<Router>
+  <Routes>
+    <Route exact path='/blog' element={<Home />} />
+    <Route exact path='/blog/:id' element={<Blog />} />
+  </Routes>
+</Router>
 ```
 
-### Deployment
-To deploy this application, we need to first build the front end by running (`npm run build`) which will consolidate all of the front end code into the (`react_app/build`) directory.
+Both the home page and the individual blog pages fetch data from the Sanity CMS using the (`@sanity/client`) module.
 
-Next, we need to tell our back end server how to load the client application inside the (`react_app/build`) directory.
-
-This is done in (`models/server.js`):
+The functions for fetching blog posts from Sanity are located in the (`sanity_client.js`) file inside the (`./src`) directory.
+Function for getting individual blogs is as follows:
 ```javascript
-middlewares() {
-   this.app.use(cors());
-   this.app.use(express.json());
-
-   // Pick up React index.html file
-   this.app.use(
-      express.static(path.join(__dirname, "../react_app/build"))
-   );
+export async function getPost(id) {
+    const posts = await client.getDocument(id)
+    const author = await client.getDocument(posts.author._ref)
+    const category = await client.getDocument(posts.categories[0]._ref)
+    return [posts, author, category]
 }
+```
+Function for fetching all of the blog posts is as follows: 
+```javascript
+export async function getPosts() {
+    const posts_temp = []
+    const posts = await client.fetch(
+        `*[_type == "post"]`
+    )
+    for (let index = 0; index < posts.length; index++) {
+        const post = posts[index];
 
+        const author = await client.getDocument(post.author._ref)
+        const category = await client.getDocument(post.categories[0]._ref)
+        posts_temp.push({
+            ...post,
+            author: author,
+            category: category.title
+        })
+    }
+    return posts_temp
+}
+```
+
+Once you have finished setting up your project you can run the following to be able to access the project from your express server:
+```sh
+npm run build
+```
+
+### Express Server
+Both applications are being run on the same server. 
+In order to achieve this, we have routed the pathnames `"/blog"` and `"/blog/*" to the react single page (`index.html`).
+We have then routed any other pathname to the single page (`index.html`) built for the Sanity project.
+
+```javascript
 // Bind controllers to routes
 routes() {
-   this.app.use(this.paths.response, require("../routes/response"));
-   // Catch all requests that don't match any route
-   this.app.get("*", (req, res) => {
-      res.sendFile(
-         path.join(__dirname, "../react_app/build/index.html")
-      );
-   });
+  // Catch all requests that go to /blog
+  this.app.get("/blog", (req, res) => {
+    res.sendFile(
+      path.join(__dirname, "../blog_react_app/build/index.html")
+    );
+  });
+  // Catch all requests that go to /blog/*
+  this.app.get("/blog/*", (req, res) => {
+    res.sendFile(
+      path.join(__dirname, "../blog_react_app/build/index.html")
+    );
+  });
+  // Catch all requests that don't match any route
+  this.app.get("*", (req, res) => {
+    res.sendFile(
+      path.join(__dirname, "../blog_sanity_cms/build/index.html")
+    );
+  });
 }
 ```
+
+To be able to access all the pages in each application, we will need to give the (`build`) directory path of both projects to the express server.
+```javascript
+middlewares() {
+  this.app.use(cors());
+  this.app.use(express.json());
+
+  // Pick up React index.html file
+  this.app.use(
+    express.static(path.join(__dirname, "../blog_sanity_cms/build"))
+  );
+  // Pick up Sanity index.html file
+  this.app.use(
+    express.static(path.join(__dirname, "../blog_react_app/build"))
+  );
+}
+```
+
