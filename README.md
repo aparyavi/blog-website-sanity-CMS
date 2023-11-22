@@ -9,7 +9,7 @@ If you don't have a Sanity project created, you can follow the instructions [her
 Otherwise, if you already have a project created, you can copy your projectId and your dataset name onto (`./blog_sanity_cms/sanity.config.js`) and (`./blog_sanity_cms/sanity.cli.js`).
 To get into the project directory run the following:
 ```sh
-cd cd blog_sanity_cms
+cd blog_sanity_cms
 ```
 (`./blog_sanity_cms/sanity.config.js`)
 ```javascript
@@ -26,7 +26,8 @@ export default defineConfig({
     types: schemaTypes,
   },
 })
-```(`./blog_sanity_cms/sanity.cli.js`)
+```
+(`./blog_sanity_cms/sanity.cli.js`)
 ```javascript
 export default defineCliConfig({
   api: {
