@@ -134,7 +134,7 @@ npm run build
 
 ### Express Server
 Both applications are being run on the same server. 
-In order to achieve this, we have routed the pathnames `"/blog"` and `"/blog/*" to the react single page (`index.html`).
+In order to achieve this, we have routed the pathnames `"/blog"` and `"/blog/*"` to the react single page (`index.html`).
 We have then routed any other pathname to the single page (`index.html`) built for the Sanity project.
 
 ```javascript
