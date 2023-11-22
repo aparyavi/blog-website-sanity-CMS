@@ -134,6 +134,11 @@ npm run build
 
 ### Express Server
 Both applications are being run on the same server. 
+You can start the node server by running:
+```sh
+node index.js
+```
+
 In order to achieve this, we have routed the pathnames `"/blog"` and `"/blog/*"` to the react single page (`index.html`).
 We have then routed any other pathname to the single page (`index.html`) built for the Sanity project.
 
@@ -178,3 +183,32 @@ middlewares() {
 }
 ```
 
+## Conclusion
+Once both applications are up and running on your server, you can access your Sanity project by going to http://localhost:3001/ on your web browser which will look like this:
+<img width="1792" alt="Screenshot 2023-11-22 at 1 03 18 PM" src="https://github.com/aparyavi/react-sanity-cms/assets/62215723/7a4c309c-4c62-43b5-a397-83b44db904bf">
+
+For ease of use, you can add this piece of HTML code in (`./blog_sanity_cms/build/index.html`) to be able to easily access your blog home page directly from the Sanity header.
+```html
+
+<head>
+  <meta charSet="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex" />
+  <meta name="referrer" content="same-origin" />
+  <link rel="icon" href="/static/favicon.ico" sizes="any" />
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
+  <link rel="manifest" href="/static/manifest.webmanifest" />
+  <title>Sanity Studio</title>
+
+  // Insert this piece of code before <script>
+  <div style='display:flex; justify-content: center; gap: 40px; padding: 30px 0px; background-color: #101112;'>
+    <a href='/blog' style="text-decoration: none; color: antiquewhite; font-size: calc(10px + 2vmin);">Blog Page</a>
+  </div>
+
+  <script>
+    ...
+```
+
+You can then access your blog page by going to http://localhost:3001/blog
+<img width="1784" alt="Screenshot 2023-11-22 at 1 07 58 PM" src="https://github.com/aparyavi/react-sanity-cms/assets/62215723/d41af811-399d-4ed7-a71d-bbdf202fd745">
