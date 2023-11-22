@@ -4,7 +4,7 @@ Using an express server to run a Sanity content management system and a React we
 ## Setup
 This project consists of two main directories, one hosting the Sanity CMS and the other hosting the React application.
 
-#### Sanity CMS
+### Sanity CMS
 If you don't have a Sanity project created, you can follow the instructions [here](https://www.sanity.io/docs/create-a-sanity-project) and start your Sanity project.
 Otherwise, if you already have a project created, you can copy your projectId and your dataset name onto (`./blog_sanity_cms/sanity.config.js`) and (`./blog_sanity_cms/sanity.cli.js`).
 To get into the project directory run the following:
@@ -55,8 +55,40 @@ Once you are done with your project customization you can run the following to b
 npm run build
 ```
 
+### React Blog
+This is a simple React application that fetches data from the Sanity CMS and displays it for the client. To become more familiar with React you can look at the resources available on [React Js website](https://legacy.reactjs.org/docs/hello-world.html) as well as other sources on the internet.
 
-#### Express Server
+To get into the project directory run the following:
+```sh
+cd blog_react_app
+```
+Next, you will need to install all the dependencies listed in (`packag.json`) by running the following:
+```sh
+npm i
+```
+
+There is a (`sanity_config.js`) file in the (`./src`) directory where you will need to put your Sanity projectId and production title:
+```javascript
+export default {
+    projectId: 'your-project-id',
+    dataset: 'dataset-name',
+    useCdn: true, // set to `false` to bypass the edge cache
+    apiVersion: '2023-11-21', // use current date (YYYY-MM-DD) to target the latest API version
+    // token: process.env.SANITY_SECRET_TOKEN // Only if you want to update content with the client
+}
+```
+
+In the (`App.js`) file we have routes to two pages which are the home page and the individual blog pages.
+```html
+<Router>
+  <Routes>
+    <Route exact path='/blog' element={<Home />} />
+    <Route exact path='/blog/:id' element={<Blog />} />
+  </Routes>
+</Router>
+```
+
+### Express Server
 Both applications are being run on the same server. 
 In order to achieve this, we have routed the pathnames `"/blog"` and `"/blog/*" to the react single page (`index.html`).
 We have then routed any other pathname to the single page (`index.html`) built for the Sanity project.
