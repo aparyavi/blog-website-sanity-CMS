@@ -4,7 +4,7 @@ Using an express server to run a Sanity content management system and a React we
 ## Setup
 This project consists of two main directories, one hosting the Sanity CMS and the other hosting the React application.
 
-### Sanity CMS
+#### Sanity CMS
 If you don't have a Sanity project created, you can follow the instructions [here](https://www.sanity.io/docs/create-a-sanity-project) and start your Sanity project.
 Otherwise, if you already have a project created, you can copy your projectId and your dataset name onto (`./blog_sanity_cms/sanity.config.js`) and (`./blog_sanity_cms/sanity.cli.js`).
 To get into the project directory run the following:
@@ -56,7 +56,7 @@ npm run build
 ```
 
 
-### Express Server
+#### Express Server
 Both applications are being run on the same server. 
 In order to achieve this, we have routed the pathnames `"/blog"` and `"/blog/*" to the react single page (`index.html`).
 We have then routed any other pathname to the single page (`index.html`) built for the Sanity project.
