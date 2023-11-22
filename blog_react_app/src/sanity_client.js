@@ -5,14 +5,14 @@ import sanity_config from './sanity_config'
 
 export const client = createClient(sanity_config)
 
-// uses GROQ to query content: https://www.sanity.io/docs/groq
+// Get blog based on ID 
 export async function getPost(id) {
     const posts = await client.getDocument(id)
     const author = await client.getDocument(posts.author._ref)
     const category = await client.getDocument(posts.categories[0]._ref)
     return [posts, author, category]
 }
-// uses GROQ to query content: https://www.sanity.io/docs/groq
+// Get all blogs in Sanity
 export async function getPosts() {
     const posts_temp = []
     const posts = await client.fetch(

@@ -18,6 +18,7 @@ class Server {
         this.app.use(
             express.static(path.join(__dirname, "../blog_sanity_cms/build"))
         );
+        // Pick up Sanity index.html file
         this.app.use(
             express.static(path.join(__dirname, "../blog_react_app/build"))
         );
