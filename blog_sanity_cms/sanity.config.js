@@ -7,8 +7,8 @@ export default defineConfig({
   name: 'default',
   title: 'blog_sanity_cms',
 
-  projectId: 'your-project-id',
-  dataset: 'dataset-name',
+  projectId: 'jh6waa2y',
+  dataset: 'production',
 
   plugins: [deskTool(), visionTool()],
 
